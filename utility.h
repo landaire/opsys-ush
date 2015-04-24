@@ -11,5 +11,6 @@ void strip(char *s);
 void clean(int argc, char **argv);
 void printargs(int argc, char **argv);
 char ** makeargs(char *s, int * argc);
+int file_exists(const char *filename);
 
 #endif

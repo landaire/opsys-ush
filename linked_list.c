@@ -117,11 +117,11 @@ void clearList(LinkedList * theList, void (*removeData)(void *)) {
 /**
  * Prints the list by calling printData for each node.
  */
-void printList(const LinkedList * theList, void (*printData)(void * a)) {
+void printList(FILE *outFile, const LinkedList * theList, void (*printData)(FILE *outFile, void * a)) {
     Node *currentNode = theList->head->next;
 
     while (currentNode != theList->head) {
-        printData(currentNode->data);
+        printData(outFile, currentNode->data);
 
         currentNode = currentNode->next;
     }
@@ -160,7 +160,7 @@ void sort(LinkedList * theList, int (*compare)(const void *, const void *)) {
     free(nodeData);
 }
 
-Node * buildNode(int argc, char ** argv, void *(*buildData)(int argc, char ** argv) ) {
+Node * buildNode(int argc, const char ** argv, void *(*buildData)(int argc, const char ** argv) ) {
     Node *temp = calloc(1, sizeof(Node));
 
     temp->data = buildData(argc, argv);

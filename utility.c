@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include "utility.h"
 
 void strip(char *s)
@@ -72,5 +73,9 @@ char ** makeargs(char *s, int * argc)
 
 }// end makeArgs
 
+int file_exists(const char *filename) {
+    struct stat filestat;
+    return stat(filename, &filestat) == 0;
+}
 
 

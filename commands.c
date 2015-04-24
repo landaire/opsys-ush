@@ -4,19 +4,19 @@
 
 #include "commands.h"
 
-void printCommand(void * passedIn) {
+void printCommand(FILE *outFile, void * passedIn) {
     Commands *command = (Commands*)passedIn;
 
     int i;
-    printf("%5d", command->num);
+    fprintf(outFile, "%5d", command->num);
     for (i = 0; i < command->rows; i++) {
-        printf(" %s", command->command[i]);
+        fprintf(outFile, " %s", command->command[i]);
     }
 
-    printf("\n");
+    fprintf(outFile, "\n");
 }
 
-void * buildCommand(int argc, char ** argv) {
+void * buildCommand(int argc, const char ** argv) {
     static int num = 0;
     Commands *command = calloc(1, sizeof(Commands));
     command->command = calloc((size_t)(argc + 1), sizeof(char*));
@@ -37,6 +37,21 @@ int compareTwoCommands(const void * p1, const void * p2) {
     Commands **com2 = (Commands**)p2;
 
     return (*com1)->num - (*com2)->num;
+}
+
+int commands_are_equal(int com_a_count, const char **com_a, int com_b_count, const char **com_b) {
+    if (com_a_count != com_b_count) {
+        return 0;
+    }
+
+    int i;
+    for (i = 0; i < com_a_count; i++) {
+        if (strcmp(com_a[i], com_b[i]) != 0) {
+            return 0;
+        }
+    }
+
+    return 1;
 }
 
 void cleanCommand(void * command) {

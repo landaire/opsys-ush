@@ -7,18 +7,28 @@
 
 struct commands
 {
-    char ** command;
-    int rows;
+    char *command;
     int num;
 };
+
+typedef struct command_part {
+    char **command;
+    int count;
+    // COMMAND_TYPE_x
+    int type;
+
+} command_part;
 
 typedef struct commands Commands;
 
 void printCommand(FILE *out_file, void * passedIn);
-void * buildCommand(int argc, const char ** argv);
-int commands_are_equal(int com_a_count, const char **com_a, int com_b_count, const char **com_b);
+void * buildCommand(char *s);
+int commands_are_equal(char *com_a, char *com_b);
 int compareTwoCommands(const void * p1, const void * p2);
 void cleanCommand(void *);
+
+void clean_command_part(void *);
+void *build_command_part(int argc, char **argv, int type);
 
 
 #endif // COMMANDS_H

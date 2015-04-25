@@ -17,7 +17,7 @@ int main()
      * Begin init
      */
     char s[MAX];
-    char **argv = NULL;
+    char **argv = NULL, *command;
     int argc;
     history = linkedList();
 
@@ -63,20 +63,16 @@ int main()
 
     while(strcmp(s, "exit") != 0)
     {
-        // First thing, add this command to the history
-        argv = makeargs(s, &argc);
+        // strip leading/trailing whitespace from the command
+        command = strip(s);
 
-        if (argc > 0) {
-            add_to_history((const char**)argv, argc);
-
-
+        if (strlen(command) > 0) {
+            add_to_history(command);
             printLastItems(stdout, history, printCommand, hist_count);
         }
 
 
         // you will probably need code to clean up stuff
-        clean(argc, argv);
-        argv = NULL;
 
         printf("Please enter a string (exit to exit) ");
         fgets(s, MAX, stdin);
@@ -89,8 +85,9 @@ int main()
 
     // Truncate the history file so we only get commands we care about
     ftruncate(fileno(hist_file), 0);
+    rewind(hist_file);
 
-    flush_history(hist_file, hist_count);
+    flush_history(hist_file);
 
     fclose(hist_file);
 

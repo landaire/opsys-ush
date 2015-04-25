@@ -41,5 +41,6 @@ void printLastItems(FILE *outFile, const LinkedList * theList, void (*printData)
 void sort(LinkedList * theList, int (*compare)(const void *, const void *));
 
 Node * buildNode(int argc, const char ** argv, void *(*buildData)(int argc, const char ** argv) );
+Node *build_node(void *data);
 
 #endif // LINKEDLIST_H

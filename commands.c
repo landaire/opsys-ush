@@ -10,27 +10,17 @@ extern int history_start;
 void printCommand(FILE *out_file, void * passedIn) {
     Commands *command = (Commands*)passedIn;
 
-    int i;
-    fprintf(out_file, "%5d", command->num);
-    for (i = 0; i < command->rows; i++) {
-        fprintf(out_file, " %s", command->command[i]);
-    }
-
-    fprintf(out_file, "\n");
+    fprintf(out_file, "%5d %s\n", command->num, command->command);
 }
 
-void * buildCommand(int argc, const char ** argv) {
+void * buildCommand(char *s) {
     static int num = 0;
     Commands *command = calloc(1, sizeof(Commands));
-    command->command = calloc((size_t)(argc + 1), sizeof(char*));
-    command->num = history_start + num++;
-    command->rows = argc;
 
-    size_t i;
-    for (i = 0; i < argc; i++) {
-        command->command[i] = calloc(strlen(argv[i]) + 1, sizeof(char));
-        strcpy(command->command[i], argv[i]);
-    }
+    command->command = calloc(strlen(s) + 1, sizeof(char));
+    strcpy(command->command, s);
+
+    command->num = history_start + num++;
 
     return command;
 }
@@ -42,28 +32,39 @@ int compareTwoCommands(const void * p1, const void * p2) {
     return (*com1)->num - (*com2)->num;
 }
 
-int commands_are_equal(int com_a_count, const char **com_a, int com_b_count, const char **com_b) {
-    if (com_a_count != com_b_count) {
-        return 0;
-    }
-
-    int i;
-    for (i = 0; i < com_a_count; i++) {
-        if (strcmp(com_a[i], com_b[i]) != 0) {
-            return 0;
-        }
-    }
-
-    return 1;
+int commands_are_equal(char *com_a, char *com_b) {
+    return strcmp(com_a, com_b) == 0;
 }
 
 void cleanCommand(void * command) {
     Commands *com = (Commands*)command;
-    int i;
-    for (i = 0; i < com->rows; i++) {
-        free(com->command[i]);
-    }
-
     free(com->command);
     free(com);
+}
+
+void clean_command_part(void *data) {
+    command_part *part = (command_part*)data;
+    int i;
+    for (i = 0; i < part->count; i++) {
+        free(part->command[i]);
+    }
+
+    free(part->command);
+    free(part);
+}
+
+void *build_command_part(int argc, char **argv, int type) {
+    static int num = 0;
+    command_part *command = calloc(1, sizeof(command_part));
+    command->command = calloc((size_t)(argc + 1), sizeof(char*));
+    command->count = argc;
+    command->type = type;
+
+    size_t i;
+    for (i = 0; i < argc; i++) {
+        command->command[i] = calloc(strlen(argv[i]) + 1, sizeof(char));
+        strcpy(command->command[i], argv[i]);
+    }
+
+    return command;
 }

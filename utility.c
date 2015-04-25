@@ -1,20 +1,40 @@
 #include <sys/stat.h>
 #include "utility.h"
 
-void strip(char *s)
+char *strip(char *s)
 {
-  int x = 0, len;
-  len = strlen(s);
-  while(s[x] != '\0' && x < len)
-  {
-	if(s[x] == '\r')
-    	s[x] = '\0';
+    int x = 0;
+    size_t len;
+    len = strlen(s);
+    char *end;
 
-	else if(s[x] == '\n')
-    	s[x] = '\0';
+    // Trim trailing linefeeds and such
+    while(s[x] != '\0' && x < len)
+    {
+        if(s[x] == '\r')
+            s[x] = '\0';
 
-    x++;
-  }// end while
+        else if(s[x] == '\n')
+            s[x] = '\0';
+
+        x++;
+    }// end while
+
+    // Trim leading spaces
+    while(*s == ' ') {
+        s++;
+    }
+
+    end = s + strlen(s) - 1;
+
+    // Trim trailing spaces
+    while (end > s && *s == ' ') {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+
+    return s;
 }// end strip
 
 void clean(int argc, char **argv)
@@ -35,7 +55,7 @@ void printargs(int argc, char **argv)
 
 }
 
-char ** makeargs(char *s, int * argc)
+char ** makeargs(char *s, int * argc, const char *delimiter)
 {
     size_t index = 0;
     char *tokens[MAX];
@@ -43,7 +63,7 @@ char ** makeargs(char *s, int * argc)
 
     strcpy(orig, s);
 
-    token = strtok_r(orig, " ", &save);
+    token = strtok_r(orig, delimiter, &save);
 
     if (token == NULL) {
         *argc = -1;
@@ -77,5 +97,7 @@ int file_exists(const char *filename) {
     struct stat filestat;
     return stat(filename, &filestat) == 0;
 }
+
+
 
 

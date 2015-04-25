@@ -5,8 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utility.h"
+#include "linked_list.h"
 
-char ** parsePrePipe(char * s, int * count);
-char ** parsePostPipe(char * s, int * count);
+#define COMMAND_TYPE_EXECUTE 1
+#define COMMAND_TYPE_REDIRECT 2
+
+LinkedList *parse_command(char *s);
 
 #endif // PARSECOMMANDS_H

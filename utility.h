@@ -7,10 +7,10 @@
 
 #define MAX 100
 
-void strip(char *s);
+char *strip(char *s);
 void clean(int argc, char **argv);
 void printargs(int argc, char **argv);
-char ** makeargs(char *s, int * argc);
+char ** makeargs(char *s, int * argc, const char *delimiter);
 int file_exists(const char *filename);
 
 #endif

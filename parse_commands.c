@@ -3,61 +3,53 @@
 //
 
 #include "utility.h"
+#include "linked_list.h"
+#include "commands.h"
+#include "parse_commands.h"
 
-char ** parsePrePipe(char * s, int * count) {
-    int totalCount = 0;
-    char **args = makeargs(s, &totalCount);
+LinkedList *parse_command(char *s) {
+    // shitty names but temp_argv is for handling whether or not there's redirection
+    // since makeargs will return a NULL pointer if there's no tokens
+    char *temp_argv[2], **redirectionParts, **pipeParts, **argv;
+    int redirectionCount, pipeCount, argc, i;
+    LinkedList *returnList = linkedList();
 
-    int pipeFound = 0, i;
+    // First parse by redirection
+    redirectionParts = makeargs(s, &redirectionCount, ">");
 
-    (*count) = 0;
+    if (redirectionCount != -1) {
+        temp_argv[0] = redirectionParts[1];
+        temp_argv[1] = NULL;
 
-    for (i = 0; i < totalCount; i++) {
-        if (!pipeFound && !strcmp(args[i], "|")) {
-            pipeFound = 1;
-        }
+        addLast(returnList, build_node(build_command_part(1, temp_argv, COMMAND_TYPE_REDIRECT)));
+    } else {
+        temp_argv[0] = s;
+        redirectionParts = temp_argv;
+    }
 
-        if (pipeFound) {
-            free(args[i]);
-            args[i] = NULL;
-        } else {
-            (*count)++;
+    pipeParts = makeargs(redirectionParts[0], &pipeCount, "|");
+
+    // There were commands piped, so iterate through them, break up the args, add to list
+    if (pipeCount != -1) {
+        argv = makeargs(s, &argc, " ");
+        addFirst(returnList, build_node(build_command_part(1, argv, COMMAND_TYPE_EXECUTE)));
+    } else {
+        // This loop is decrementing because if there was a pipe redirection, we always want it to be
+        // last so we call addFirst
+        for (i = pipeCount - 1; i >= 0; i--) {
+            argv = makeargs(pipeParts[i], &argc, " ");
+            addFirst(returnList, build_node(build_command_part(1, argv, COMMAND_TYPE_EXECUTE)));
         }
     }
 
-    return args;
-}
-
-char ** parsePostPipe(char * s, int * count) {
-    int totalCount = 0;
-    char **args = makeargs(s, &totalCount);
-
-    int pipeFound = 0, i, j;
-
-    (*count) = 0;
-
-    for (i = totalCount - 1; i >= 0; i--) {
-        if (!pipeFound && !strcmp(args[i], "|")) {
-            pipeFound = 1;
-        }
-
-        if (pipeFound) {
-            free(args[i]);
-            args[i] = NULL;
-        } else {
-            (*count)++;
-        }
+    // Redirection parts is the weird case where if there's no redirection, we don't touch it.
+    if (redirectionCount != -1) {
+        clean(redirectionCount, redirectionParts);
     }
 
-    char **returnArgs = calloc((size_t)(totalCount + 1), sizeof(char*));
-
-    int startingIndexForRightSide = (totalCount - *count);
-
-    for (i = startingIndexForRightSide, j = 0; i < totalCount; i++, j++) {
-        returnArgs[j] = args[i];
+    if (pipeCount != -1) {
+        clean(pipeCount, pipeParts);
     }
 
-    free(args);
-
-    return returnArgs;
+    return returnList;
 }

@@ -182,10 +182,10 @@ void sort(LinkedList * theList, int (*compare)(const void *, const void *)) {
     free(nodeData);
 }
 
-Node * buildNode(int argc, const char ** argv, void *(*buildData)(int argc, const char ** argv) ) {
+Node *build_node(void *data) {
     Node *temp = calloc(1, sizeof(Node));
 
-    temp->data = buildData(argc, argv);
+    temp->data = data;
 
     return temp;
 }

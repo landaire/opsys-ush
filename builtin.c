@@ -32,6 +32,7 @@ void init_builtins() {
     int i;
 
     builtin_count = sizeof(commands);
+    builtins = calloc(builtin_count, sizeof(builtin));
 
     builtin *temp;
 

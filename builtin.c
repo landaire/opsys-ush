@@ -14,6 +14,10 @@
 static builtin **builtins = NULL;
 static int builtin_count;
 
+int is_bang_command(const char *command) {
+    return strstr("!", command) == command;
+}
+
 void init_builtins() {
     if (builtins != NULL) {
         return;
@@ -61,6 +65,10 @@ void clean_builtins() {
 int command_is_builtin(const char **command) {
     int i;
 
+    if (is_bang_command(command[0])) {
+        return 1;
+    }
+
     for (i = 0; i < builtin_count; i++) {
         if (strcmp(command[0], builtins[i]->command) == 0) {
             return 1;
@@ -72,6 +80,16 @@ int command_is_builtin(const char **command) {
 
 int exec_builtin(int argc, char **command) {
     int i;
+
+    if (is_bang_command(command[0])) {
+
+        // Check if it's a double bang
+        if (strcmp(command[0], "!!") == 0) {
+
+        } else if (sscanf(command[0], "!%d", &i) == 1) {
+            // execute command by this ID
+        }
+    }
 
     for (i = 0; i < builtin_count; i++) {
         if (strcmp(command[0], builtins[i]->command) == 0) {
@@ -87,3 +105,5 @@ int builtin_history(int argc, char **command) {
 
     return 0;
 }
+
+int builtin_shebang()

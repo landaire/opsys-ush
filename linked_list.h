@@ -18,7 +18,7 @@ typedef struct node Node;
 struct linkedlist
 {
     Node * head;
-    int size;
+    size_t size;
 };
 typedef struct linkedlist LinkedList;
 

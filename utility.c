@@ -74,7 +74,7 @@ char ** makeargs(char *s, int * argc, const char *delimiter)
         char *tok = calloc(strlen(token) + 1, sizeof(char));
         strcpy(tok, token);
         tokens[index++] = tok;
-    } while ((token = strtok_r(NULL, " ", &save)) != NULL);
+    } while ((token = strtok_r(NULL, delimiter, &save)) != NULL);
 
     // + 1 for the null index
     char **returnTokens = calloc(index + 1, sizeof(char*));

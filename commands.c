@@ -4,6 +4,7 @@
 
 #include "commands.h"
 #include "history.h"
+#include "parse_commands.h"
 
 extern int history_start;
 

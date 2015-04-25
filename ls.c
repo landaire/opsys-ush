@@ -18,31 +18,40 @@ void ls(int argc, char ** argv) {
     DIR *dp = NULL;
     struct dirent *dirp;
     struct stat fs;
-    int lswitchPresent = 0;
-    char *path = NULL;
+    int lswitchPresent = 0, i;
+    char path[MAX];
     int is_file = 0;
 
-
-    if(argc < 2 || argc > 3) {
+    if(argc > 3) {
         perror("Not enough arguments\n");
-        exit(-1);
+        exit(EXIT_FAILURE);
     }// end if
 
+    path[0] = '\0';
+
     // Iterate our args and parse them
-    int i;
     for (i = 1; i < argc; i++) {
         // Assume the only arg without a dash is going to be the path
         if (argv[i][0] != '-') {
-            path = argv[i];
+            strcpy(path, argv[i]);
         } else if (!strcmp(argv[i], "-l")) {
             lswitchPresent = 1;
         }
     }
 
+    if (path[0] == '\0') {
+        if (getcwd(path, MAX) == NULL) {
+            perror("getcwd() error");
+
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    printf("%s\n", path);
 
     if((dp = opendir(path)) == NULL) {
         if (access(path, F_OK) == -1) {
-            perror("Could not open file or directory\n");
+            perror("opendir()");
             exit(-1);
         } else {
             is_file = 1;
@@ -70,7 +79,7 @@ void ls(int argc, char ** argv) {
         closedir(dp);
     }
 
-    exit(0);
+    exit(EXIT_SUCCESS);
 }// end main
 
 void printDirentNormal(char *name) {

@@ -10,12 +10,13 @@
 #include "linked_list.h"
 #include "history.h"
 #include "commands.h"
+#include "pipe_commands.h"
 
 static builtin **builtins = NULL;
-static int builtin_count;
+static size_t builtin_count = 2;
 
 int is_bang_command(const char *command) {
-    return strstr("!", command) == command;
+    return command[0] == '!';
 }
 
 void init_builtins() {
@@ -35,7 +36,6 @@ void init_builtins() {
 
     int i;
 
-    builtin_count = sizeof(commands);
     builtins = calloc(builtin_count, sizeof(builtin));
 
     builtin *temp;
@@ -62,15 +62,16 @@ void clean_builtins() {
     builtins = NULL;
 }
 
-int command_is_builtin(const char **command) {
+int command_is_builtin(const char *command) {
     int i;
 
-    if (is_bang_command(command[0])) {
+    if (is_bang_command(command)) {
         return 1;
     }
 
+    printf("builtin_count %d\n", builtin_count);
     for (i = 0; i < builtin_count; i++) {
-        if (strcmp(command[0], builtins[i]->command) == 0) {
+        if (strcmp(command, builtins[i]->command) == 0) {
             return 1;
         }
     }
@@ -80,14 +81,31 @@ int command_is_builtin(const char **command) {
 
 void exec_builtin(int argc, char **command) {
     int i;
+    Node *cur;
+    Commands *cur_command;
 
     if (is_bang_command(command[0])) {
 
         // Check if it's a double bang
         if (strcmp(command[0], "!!") == 0) {
+            cur_command = (Commands*)history->head->prev->data;
+            execute_command(cur_command->command);
 
+            return;
         } else if (sscanf(command[0], "!%d", &i) == 1) {
-            // execute command by this ID
+            cur = history->head;
+            while ((cur = cur->next) != history->head) {
+                cur_command = (Commands*)cur->data;
+                if (cur_command->num == i) {
+                    execute_command(cur_command->command);
+                }
+            }
+
+            if (cur == history->head) {
+                fprintf(stderr, "Invalid identifier: %d\n", i);
+            }
+
+            return;
         }
     }
 

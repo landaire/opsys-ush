@@ -14,7 +14,7 @@ typedef struct builtin_command {
 
 void init_builtins();
 void clean_builtins();
-int command_is_builtin(const char **command);
+int command_is_builtin(const char *command);
 void exec_builtin(int argc, char **command);
 void builtin_history(int argc, char **command);
 

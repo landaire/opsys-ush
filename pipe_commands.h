@@ -6,6 +6,6 @@
 #include <string.h>
 #include "utility.h"
 
-void pipeIt(char ** prePipe, char ** postPipe);
+void execute_command(char *command);
 
 #endif // PIPECOMMANDS_h

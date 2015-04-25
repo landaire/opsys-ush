@@ -5,6 +5,7 @@
 #include "history.h"
 #include "commands.h"
 #include "builtin.h"
+#include "pipe_commands.h"
 // add your #includes here
 
 #define CONFIG_FILENAME ".ushrc"
@@ -68,11 +69,10 @@ int main()
 
         if (strlen(command) > 0) {
             add_to_history(command);
-            printLastItems(stdout, history, printCommand, hist_count);
+            execute_command(command);
         }
 
-
-        // you will probably need code to clean up stuff
+        printf("%s\n", command);
 
         printf("Please enter a string (exit to exit) ");
         fgets(s, MAX, stdin);

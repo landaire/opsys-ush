@@ -21,5 +21,6 @@ void flush_history(FILE *histfile);
 void parse_history_file(FILE *histfile);
 void init_hist_start(int start);
 Commands *history_command_with_num(int num);
+int is_bang_command(const char *command);
 
 #endif //HW7_HISTORY_H

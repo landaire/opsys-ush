@@ -80,42 +80,64 @@ int command_is_builtin(const char *command) {
 
 void exec_builtin(int argc, char **command) {
     int i;
-    Node *cur;
-    Commands *cur_command;
+    char *bang_command;
 
     if (is_bang_command(command[0])) {
+        bang_command = command_from_bang(command[0]);
 
-        // Check if it's a double bang
-        if (strcmp(command[0], "!!") == 0) {
-            cur_command = (Commands*)history->head->prev->data;
-            execute_command(cur_command->command);
-
-            return;
-        } else if (sscanf(command[0], "!%d", &i) == 1) {
-            cur_command = history_command_with_num(i);
-
-            if (cur_command != NULL) {
-                execute_command(cur_command->command);
-            } else {
-                fprintf(stderr, "Invalid identifier: %d\n", i);
-            }
-
-
-            return;
+        if (bang_command != NULL) {
+            execute_command(bang_command);
         }
+
+        free(bang_command);
+
+        exit(EXIT_SUCCESS);
     }
 
     for (i = 0; i < builtin_count; i++) {
         if (strcmp(command[0], builtins[i]->command) == 0) {
-            return builtins[i]->exec(argc, command);
+            // It's assumed that the command should exit themselves... if they don't, it's a failure
+            builtins[i]->exec(argc, command);
         }
     }
 
-    exit(-1);
+    exit(EXIT_FAILURE);
+}
+
+char *command_from_bang(char *command) {
+    Commands *cur_command;
+    int id, argc = 0;
+
+    char *out = NULL;
+    char **argv = NULL;
+
+    // Check if it's a double bang
+    if (strcmp(command, "!!") == 0) {
+        cur_command = (Commands*)history->head->prev->data;
+
+        argv = makeargs(cur_command->command, &argc, " ");
+    } else if (sscanf(command, "!%d", &id) == 1) {
+        cur_command = history_command_with_num(id);
+
+        if (cur_command != NULL) {
+            argv = makeargs(cur_command->command, &argc, " ");
+        }
+    }
+
+    if (argv != NULL) {
+        if (argc > 0) {
+            out = calloc(strlen(argv[0]) + 1, sizeof(char));
+            strcpy(out, argv[0]);
+        }
+
+        clean(argc, argv);
+    }
+
+    return out;
 }
 
 void builtin_history(int argc, char **command) {
     printLastItems(stdout, history, printCommand, hist_count);
 
-    exit(0);
+    exit(EXIT_SUCCESS);
 }

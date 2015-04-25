@@ -17,5 +17,7 @@ void clean_builtins();
 int command_is_builtin(const char *command);
 void exec_builtin(int argc, char **command);
 void builtin_history(int argc, char **command);
+char *command_from_bang(char *command);
+int is_bang_command(const char *command);
 
 #endif //HW7_BUILTIN_H

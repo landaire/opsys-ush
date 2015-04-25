@@ -121,7 +121,11 @@ void execute_command(char *command) {
         waitpid(child_pids[i], &status, 0);
 
         if (WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE) {
-            fprintf(stderr, "Invalid command %s\n", current_command->command[0]);
+
+            // don't print messages for bangs
+            if (!command_is_builtin(current_command->command[0])) {
+                fprintf(stderr, "Invalid command %s\n", current_command->command[0]);
+            }
         }
     }
 
@@ -132,49 +136,4 @@ void execute_command(char *command) {
     free(commands);
     free(pipes);
     free(child_pids);
-}
-
-void pipeIt(char ** prePipe, char ** postPipe) {
-    int fd[2], res;
-    pid_t prePipePid, postPipePid;
-
-    res = pipe(fd);
-
-    if(res < 0)
-    {
-        printf("Pipe Failure\n");
-        return;
-    }// end if
-
-    if((prePipePid = fork()) == 0) {
-        dup2(fd[1], STDOUT_FILENO);
-        close(fd[0]);
-
-        int status = execvp(prePipe[0], prePipe);
-
-        _exit(status);
-    }
-
-    if ((postPipePid = fork()) == 0) {
-        dup2(fd[0], STDIN_FILENO);
-        close(fd[1]);
-
-        int status = execvp(postPipe[0], postPipe);
-
-        _exit(status);
-    }
-
-    int status;
-
-    close(fd[1]);
-
-    pid_t pids[2] = {prePipePid, postPipePid};
-
-    int i;
-    for (i = 0; i < sizeof(pids); i++) {
-        pid_t returnPid = waitpid(pids[i], &status, 0);
-        if (WEXITSTATUS(status) > EX__BASE || returnPid == -1) {
-            printf("Invalid command: %s\n", prePipe[0]);
-        }
-    }
 }

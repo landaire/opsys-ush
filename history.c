@@ -20,17 +20,18 @@ void add_to_history(char *command) {
 
     if (can_add_to_history(command)) {
         // check the size to ensure we only keep HISTCOUNT items
+        // TODO: don't think this is needed? doing this may lead to bugs
         if (history->size == hist_count) {
-            // remove the first element
-            first_element = history->head->next;
-
-            temp = first_element->next;
-
-            cleanCommand(first_element->data);
-            free(first_element);
-
-            history->head->next = temp;
-            temp->prev = history->head;
+//            // remove the first element
+//            first_element = history->head->next;
+//
+//            temp = first_element->next;
+//
+//            cleanCommand(first_element->data);
+//            free(first_element);
+//
+//            history->head->next = temp;
+//            temp->prev = history->head;
         }
 
         if (command[0] == '!' && sscanf(command, "!%d", &id) == 1) {

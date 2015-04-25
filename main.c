@@ -7,6 +7,10 @@
 #include "builtin.h"
 // add your #includes here
 
+#define CONFIG_FILENAME ".ushrc"
+#define HISTCOUNT_KEY "HISTCOUNT"
+#define HISTFILECOUNT_KEY "HISTFILECOUNT"
+
 int main()
 {
     /**
@@ -19,6 +23,22 @@ int main()
 
     // You will need code to open .ushrc and .ush_history here
     FILE *hist_file, *config_file;
+
+    // Parse the user config file
+    if (file_exists(CONFIG_FILENAME)) {
+        config_file = fopen(CONFIG_FILENAME, "r");
+
+        while (fscanf(config_file, "%s=%d", s, &argc)) {
+            if (strcmp(HISTCOUNT_KEY, s) == 0) {
+                hist_count = argc;
+            } else if (strcmp(HISTFILECOUNT_KEY, s)) {
+                histfile_count = argc;
+            }
+        }
+
+        fclose(config_file);
+    }
+
 
     if (file_exists(HISTORY_FILENAME)) {
         hist_file = fopen(HISTORY_FILENAME, "r+");

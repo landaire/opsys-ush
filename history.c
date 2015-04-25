@@ -8,7 +8,7 @@
 
 int history_start = -1;
 int hist_count = 100;
-int hist_file_count = 1000;
+int histfile_count = 1000;
 LinkedList *history = NULL;
 
 void add_to_history(const char **command, int count) {

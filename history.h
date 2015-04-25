@@ -11,7 +11,7 @@
 
 extern int history_start;
 extern int hist_count;
-extern int hist_file_count;
+extern int histfile_count;
 extern LinkedList *history;
 
 void add_to_history(const char **command, int count);

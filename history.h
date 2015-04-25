@@ -6,6 +6,7 @@
 #define HW7_HISTORY_H
 
 #include "linked_list.h"
+#include "commands.h"
 
 #define HISTORY_FILENAME ".ush_history"
 
@@ -19,5 +20,6 @@ int can_add_to_history(char *command);
 void flush_history(FILE *histfile);
 void parse_history_file(FILE *histfile);
 void init_hist_start(int start);
+Commands *history_command_with_num(int num);
 
 #endif //HW7_HISTORY_H

@@ -69,7 +69,6 @@ int command_is_builtin(const char *command) {
         return 1;
     }
 
-    printf("builtin_count %d\n", builtin_count);
     for (i = 0; i < builtin_count; i++) {
         if (strcmp(command, builtins[i]->command) == 0) {
             return 1;
@@ -93,17 +92,14 @@ void exec_builtin(int argc, char **command) {
 
             return;
         } else if (sscanf(command[0], "!%d", &i) == 1) {
-            cur = history->head;
-            while ((cur = cur->next) != history->head) {
-                cur_command = (Commands*)cur->data;
-                if (cur_command->num == i) {
-                    execute_command(cur_command->command);
-                }
-            }
+            cur_command = history_command_with_num(i);
 
-            if (cur == history->head) {
+            if (cur_command != NULL) {
+                execute_command(cur_command->command);
+            } else {
                 fprintf(stderr, "Invalid identifier: %d\n", i);
             }
+
 
             return;
         }

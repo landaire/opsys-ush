@@ -68,11 +68,9 @@ int main()
         command = strip(s);
 
         if (strlen(command) > 0) {
-            add_to_history(command);
             execute_command(command);
+            add_to_history(command);
         }
-
-        printf("%s\n", command);
 
         printf("Please enter a string (exit to exit) ");
         fgets(s, MAX, stdin);

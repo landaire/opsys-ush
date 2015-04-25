@@ -28,7 +28,7 @@ char *strip(char *s)
     end = s + strlen(s) - 1;
 
     // Trim trailing spaces
-    while (end > s && *s == ' ') {
+    while (end > s && *end == ' ') {
         end--;
     }
 

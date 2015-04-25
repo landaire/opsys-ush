@@ -19,7 +19,7 @@
  * Executes the ls command. This should only be called from a forked process, or a process
  * expecting to exit immediately
  */
-int ls(int argc, char ** argv);
+void ls(int argc, char ** argv);
 
 /**
  * Prints a dirent normally (name followed by linefeed)

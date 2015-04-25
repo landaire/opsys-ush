@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <libgen.h>
 
-int ls(int argc, char ** argv) {
+void ls(int argc, char ** argv) {
     DIR *dp = NULL;
     struct dirent *dirp;
     struct stat fs;

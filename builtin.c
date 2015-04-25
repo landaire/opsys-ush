@@ -78,7 +78,7 @@ int command_is_builtin(const char **command) {
     return 0;
 }
 
-int exec_builtin(int argc, char **command) {
+void exec_builtin(int argc, char **command) {
     int i;
 
     if (is_bang_command(command[0])) {
@@ -97,13 +97,11 @@ int exec_builtin(int argc, char **command) {
         }
     }
 
-    return -1;
+    exit(-1);
 }
 
-int builtin_history(int argc, char **command) {
+void builtin_history(int argc, char **command) {
     printLastItems(stdout, history, printCommand, hist_count);
 
-    return 0;
+    exit(0);
 }
-
-int builtin_shebang()

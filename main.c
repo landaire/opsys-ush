@@ -28,13 +28,15 @@ int main()
 
     while(strcmp(s, "exit") != 0)
     {
-
         // First thing, add this command to the history
         argv = makeargs(s, &argc);
-        add_to_history(history, (const char**)argv, argc);
+
+        if (argc > 0) {
+            add_to_history(history, (const char**)argv, argc);
 
 
-        printList(stdout, history, printCommand);
+            printList(stdout, history, printCommand);
+        }
 
 
         // you will probably need code to clean up stuff
@@ -44,7 +46,6 @@ int main()
         printf("Please enter a string (exit to exit) ");
         fgets(s, MAX, stdin);
         strip(s);
-
     }// end while
 
     clearList(history, cleanCommand);

@@ -60,7 +60,6 @@ void execute_command(char *command) {
             }
         }
 
-        printf("forking\n");
         child_pid = fork();
         child_pids[child_num] = child_pid;
 

@@ -64,7 +64,7 @@ void *build_command_part(int argc, char **argv, int type) {
     size_t i;
     for (i = 0; i < argc; i++) {
         command->command[i] = calloc(strlen(argv[i]) + 1, sizeof(char));
-        strcpy(command->command[i], argv[i]);
+        strcpy(command->command[i], strip(argv[i]));
     }
 
     return command;

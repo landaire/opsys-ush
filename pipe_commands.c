@@ -49,9 +49,15 @@ void execute_command(char *command) {
             next_command = (command_part*)cur->next->data;
 
             if (next_command->type == COMMAND_TYPE_REDIRECT) {
+                printf("redirect\n");
                 // create the file to redirect to
                 redirect = fopen(next_command->command[0], "w+");
-                dup2(fileno(redirect), pipes[child_num * 2 + 1]);
+                close(pipes[child_num * 2 + 1]);
+                pipes[child_num * 2 + 1] = fileno(redirect);
+//                if (dup2(fileno(redirect), pipes[child_num * 2 + 1])) {
+//                    perror("dup2 error at redirect");
+//                    exit(EXIT_FAILURE);
+//                }
             }
         }
 

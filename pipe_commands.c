@@ -127,7 +127,7 @@ void execute_command(char *command) {
         if (WIFEXITED(status) && WEXITSTATUS(status) == EXIT_FAILURE) {
 
             // don't print messages for bangs
-            if (!command_is_builtin(current_command->command[0])) {
+            if (!is_bang_command(current_command->command[0])) {
                 fprintf(stderr, "Invalid command %s\n", current_command->command[0]);
             }
         }

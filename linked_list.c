@@ -117,13 +117,35 @@ void clearList(LinkedList * theList, void (*removeData)(void *)) {
 /**
  * Prints the list by calling printData for each node.
  */
-void printList(FILE *outFile, const LinkedList * theList, void (*printData)(FILE *outFile, void * a)) {
+void printList(FILE *outFile, const LinkedList * theList, void (*printData)(FILE *out_file, void * a)) {
     Node *currentNode = theList->head->next;
 
     while (currentNode != theList->head) {
         printData(outFile, currentNode->data);
 
         currentNode = currentNode->next;
+    }
+}
+
+void printLastItems(FILE *outFile, const LinkedList * theList, void (*printData)(FILE *out_file, void * a), int num) {
+    Node *currentNode = theList->head->next;
+
+    int index = 0;
+    int startAtIndex = theList->size - num;
+
+    // In the event where say the list has a size of 10, but they want 1000 items max in the file,
+    // we'd get -910. Since we already reloaded all of the commands from the previous sessions,
+    // we can just print from offset 0
+    if (startAtIndex < 0) {
+        startAtIndex = 0;
+    }
+    while (currentNode != theList->head) {
+        if (index >= startAtIndex) {
+            printData(outFile, currentNode->data);
+        }
+
+        currentNode = currentNode->next;
+        index++;
     }
 }
 

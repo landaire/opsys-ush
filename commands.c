@@ -3,24 +3,27 @@
 //
 
 #include "commands.h"
+#include "history.h"
 
-void printCommand(FILE *outFile, void * passedIn) {
+extern int history_start;
+
+void printCommand(FILE *out_file, void * passedIn) {
     Commands *command = (Commands*)passedIn;
 
     int i;
-    fprintf(outFile, "%5d", command->num);
+    fprintf(out_file, "%5d", command->num);
     for (i = 0; i < command->rows; i++) {
-        fprintf(outFile, " %s", command->command[i]);
+        fprintf(out_file, " %s", command->command[i]);
     }
 
-    fprintf(outFile, "\n");
+    fprintf(out_file, "\n");
 }
 
 void * buildCommand(int argc, const char ** argv) {
     static int num = 0;
     Commands *command = calloc(1, sizeof(Commands));
     command->command = calloc((size_t)(argc + 1), sizeof(char*));
-    command->num = num++;
+    command->num = history_start + num++;
     command->rows = argc;
 
     size_t i;

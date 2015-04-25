@@ -20,7 +20,7 @@ void init_builtins() {
     }
 
     static const char *commands[] = {
-            "ls",
+            "myls",
             "history",
     };
 

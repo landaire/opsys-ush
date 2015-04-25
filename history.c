@@ -7,8 +7,11 @@
 #include "utility.h"
 
 int history_start = -1;
+int hist_count = 100;
+int hist_file_count = 1000;
+LinkedList *history = NULL;
 
-void add_to_history(LinkedList *history_list, const char **command, int count, int hist_count) {
+void add_to_history(const char **command, int count) {
     if (can_add_to_history(history_list, command, count)) {
         // check the size to ensure we only keep HISTCOUNT items
         if (history_list->size == hist_count) {
@@ -26,16 +29,16 @@ void add_to_history(LinkedList *history_list, const char **command, int count, i
     }
 }
 
-int can_add_to_history(const LinkedList *historyList, const char **command, int count) {
-    if (historyList->size == 0) {
+int can_add_to_history(const char **command, int count) {
+    if (history->size == 0) {
         return 1;
     }
 
-    Commands *lastCommand = (Commands*)historyList->head->prev->data;
+    Commands *lastCommand = (Commands*)history->head->prev->data;
     return !commands_are_equal(lastCommand->rows, (const char**)lastCommand->command, count, command);
 }
 
-void parse_history_file(FILE *histfile, LinkedList *history_list) {
+void parse_history_file(FILE *histfile) {
     int index, argc;
     char command[MAX], **argv;
 
@@ -51,7 +54,7 @@ void parse_history_file(FILE *histfile, LinkedList *history_list) {
 
         argv = makeargs(command, &argc);
 
-        addLast(history_list, buildNode(argc, (const char**)argv, buildCommand));
+        addLast(history, buildNode(argc, (const char**)argv, buildCommand));
 
         free(argv);
     }
@@ -60,8 +63,8 @@ void parse_history_file(FILE *histfile, LinkedList *history_list) {
     init_hist_start(0);
 }
 
-void flush_history(FILE *histfile, LinkedList *histList, int hist_count) {
-    printLastItems(histfile, histList, printCommand, hist_count);
+void flush_history(FILE *histfile, int hist_count) {
+    printLastItems(histfile, history, printCommand, hist_count);
 }
 
 void init_hist_start(int start) {

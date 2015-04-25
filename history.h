@@ -10,11 +10,14 @@
 #define HISTORY_FILENAME ".ush_history"
 
 extern int history_start;
+extern int hist_count;
+extern int hist_file_count;
+extern LinkedList *history;
 
-void add_to_history(LinkedList *history_list, const char **command, int count, int hist_count);
-int can_add_to_history(const LinkedList *historyList, const char **command, int count);
-void flush_history(FILE *histfile, LinkedList *histList, int hist_count);
-void parse_history_file(FILE *histfile, LinkedList *history_list);
+void add_to_history(const char **command, int count);
+int can_add_to_history(const char **command, int count);
+void flush_history(FILE *histfile, int hist_count);
+void parse_history_file(FILE *histfile);
 void init_hist_start(int start);
 
 #endif //HW7_HISTORY_H

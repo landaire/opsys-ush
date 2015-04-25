@@ -4,14 +4,18 @@
 #include "linked_list.h"
 #include "history.h"
 #include "commands.h"
+#include "builtin.h"
 // add your #includes here
 
 int main()
 {
+    /**
+     * Begin init
+     */
     char s[MAX];
     char **argv = NULL;
-    int argc, hist_count = 100, hist_file_count = 1000;
-    LinkedList *history = linkedList();
+    int argc;
+    history = linkedList();
 
     // You will need code to open .ushrc and .ush_history here
     FILE *hist_file, *config_file;
@@ -19,16 +23,23 @@ int main()
     if (file_exists(HISTORY_FILENAME)) {
         hist_file = fopen(HISTORY_FILENAME, "r+");
 
-        parse_history_file(hist_file, history);
+        parse_history_file(hist_file);
     } else {
         hist_file = fopen(HISTORY_FILENAME, "w+");
         init_hist_start(0);
     }
 
+    init_builtins();
+
+    /**
+     * End init
+     *
+     * Begin ush loop
+     */
+
     printf("Please enter a string (exit to exit) ");
     fgets(s, MAX, stdin);
     strip(s);
-
 
     while(strcmp(s, "exit") != 0)
     {
@@ -36,10 +47,10 @@ int main()
         argv = makeargs(s, &argc);
 
         if (argc > 0) {
-            add_to_history(history, (const char**)argv, argc, hist_count);
+            add_to_history((const char**)argv, argc);
 
 
-            printList(stdout, history, printCommand);
+            printLastItems(stdout, history, printCommand, hist_count);
         }
 
 
@@ -52,16 +63,28 @@ int main()
         strip(s);
     }// end while
 
+    /**
+     * Begin history flushing
+     */
+
     // Truncate the history file so we only get commands we care about
     ftruncate(fileno(hist_file), 0);
 
-    flush_history(hist_file, history, hist_count);
+    flush_history(hist_file, hist_count);
 
     fclose(hist_file);
+
+    /**
+     * End history flushing
+     *
+     * Begin cleanup
+     */
 
     clearList(history, cleanCommand);
     free(history);
     history = NULL;
+
+    clean_builtins();
 
     return 0;
 

@@ -17,7 +17,8 @@ int main()
     /**
      * Begin init
      */
-    char s[MAX];
+    int ret;
+    char s[MAX], line[MAX];
     char **argv = NULL, *command;
     int argc;
     history = linkedList();
@@ -29,10 +30,16 @@ int main()
     if (file_exists(CONFIG_FILENAME)) {
         config_file = fopen(CONFIG_FILENAME, "r");
 
-        while (fscanf(config_file, "%s=%d", s, &argc)) {
+        while (fgets(line, MAX, config_file)) {
+            if ((ret = sscanf(line, "%[^=]=%d", s, &argc)) == 0) {
+                continue;
+            } else if (ret == EOF) {
+                break;
+            }
+
             if (strcmp(HISTCOUNT_KEY, s) == 0) {
                 hist_count = argc;
-            } else if (strcmp(HISTFILECOUNT_KEY, s)) {
+            } else if (strcmp(HISTFILECOUNT_KEY, s) == 0) {
                 histfile_count = argc;
             }
         }
